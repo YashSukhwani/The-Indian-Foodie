@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title> The Indian Foodie </title>
+        <link rel="stylesheet" href="index.css">
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
+    </head>
+
+    <body>
+        <h1>The Indian Foodie</h1>
+        <div class="all">
+            <ul id="foodList">
+                <form id="form">
+                    <li id="insert">
+                        <span class="outside">
+                            <span class="left">
+                                <input name="starter" type="text" placeholder="Starter">
+                            </span>
+                            <span class="center">
+                                <input name="main" type="text" placeholder="Main Course">
+                            </span>
+                            <span class="right">
+                                <input name="drink" type="text" placeholder="Drink">
+                            </span>
+                        </span>
+                    </li>
+                    <br>
+                    <span class="outside">
+                        <span class="button">
+                            <button id="update">Update Entry</button>
+                        </span>
+                        <span class="button">
+                            <button type="submit" id="sub">Add Entry</button>
+                        </span>
+                        <span class="button">
+                            <button id="set">Set Entry</button>
+                        </span>
+                    </span>
+                </form>
+                <br>
+                <br>
+                <li id="heading">
+                    <span class="outside">
+                        <span class="left">Starter</span>
+                        <span class="center">Main Course</span>
+                        <span class="right">Drink</span>
+                    </span>
+                </li>
+                <br>
+            </ul>
+        </div>
+
+        <script src="./firebase.js"></script>
+        <script src="app.js"></script>
+    </body>
+
+</html>
