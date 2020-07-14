@@ -110,10 +110,10 @@ function signOut() {
 
 function hideDisable(item) {
     item.disabled = true
-    item.style.visibility = hidden
+    // item.style.visibility = hidden
 }
 
 function showEnable(item) {
     item.disabled = false
-    item.style.visibility = block
+    // item.style.visibility = block
 }
