@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title> Home</title>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-auth.js"></script>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="enter.css">
+    </head>
+
+    <body onbeforeunload="sessionEnd()">
+
+        <h1>The Indian Foodie</h1>
+        <div class="outside">
+            <div class="home">
+                <input type="email" id="email" class="form-control" placeholder="Email">
+                <input type="password" id="pass" class="form-control" placeholder="Password">
+                <button type="submit" id="login" onclick="loginUser()" class="btn btn-dark">Login</button>
+                <button type="submit" id="signup" onclick="createNewUser()" class="btn btn-dark">Sign Up</button>
+                <button type="submit" id="signout" onclick="signOut()" disabled class="btn btn-dark">Sign Out</button>
+                <p id="verify"></p>
+            </div>
+        </div>
+
+        <script src="./firebase.js"></script>
+        <script src="./enter.js"></script>
+    </body>
+
+</html>

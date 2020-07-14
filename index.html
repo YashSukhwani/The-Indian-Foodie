@@ -3,9 +3,11 @@
 
     <head>
         <title> The Indian Foodie </title>
-        <link rel="stylesheet" href="index.css">
+        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
         <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-firestore.js"></script>
+        <link rel="stylesheet" href="index.css">
     </head>
 
     <body>
@@ -16,26 +18,26 @@
                     <li id="insert">
                         <span class="outside">
                             <span class="left">
-                                <input name="starter" type="text" placeholder="Starter">
+                                <input name="starter" class="form-control" type="text" placeholder="Starter">
                             </span>
                             <span class="center">
-                                <input name="main" type="text" placeholder="Main Course">
+                                <input name="main" class="form-control" type="text" placeholder="Main Course">
                             </span>
                             <span class="right">
-                                <input name="drink" type="text" placeholder="Drink">
+                                <input name="drink" class="form-control" type="text" placeholder="Drink">
                             </span>
                         </span>
                     </li>
                     <br>
                     <span class="outside">
                         <span class="button">
-                            <button id="update">Update Entry</button>
+                            <button class="btn btn-dark" id="update">Update Entry</button>
                         </span>
                         <span class="button">
-                            <button type="submit" id="sub">Add Entry</button>
+                            <button class="btn btn-dark" type="submit" id="sub">Add Entry</button>
                         </span>
                         <span class="button">
-                            <button id="set">Set Entry</button>
+                            <button class="btn btn-dark" id="set">Set Entry</button>
                         </span>
                     </span>
                 </form>
@@ -53,7 +55,7 @@
         </div>
 
         <script src="./firebase.js"></script>
-        <script src="app.js"></script>
+        <script src="index.js"></script>
     </body>
 
 </html>

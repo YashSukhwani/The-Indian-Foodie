@@ -52,22 +52,6 @@ db.collection('Foodie').orderBy('Main').onSnapshot(snapshot => {
     });
 });
 
-// Updating Records
-// db.collection('Foodie').doc('DOgwUvtEQbjZohQNIeMr').update({
-//     Starter: 'Chicken Tikka'
-// });
-
-// db.collection('cafes').doc('DOgwUvtEQbjZohQNIeMr').update({
-//     Drink: 'Fresh Lime Soda'
-// });
-
-// Setting Data
-// db.collection('Foodie').doc('DOgwUvtEQbjZohQNIeMr').set({
-//     Starter: 'Sev Puri',
-//     Main: 'Dal Rice',
-//     Drink: 'Pommergranate Juice'
-// });
-
 const form = document.querySelector('form');
 form.addEventListener('submit', e => {
     e.preventDefault();
