@@ -1,5 +1,3 @@
-// Later implement clearing of input boxes for whenever the form is submitted.
-
 // Test this program and ensure it follows the description below. 
 // Test weird scenarios and try to break the current implementation.
 
@@ -62,7 +60,7 @@ function createNewUser() {
             user.sendEmailVerification().then(function () { // Email sent.
                 var verified = user.emailVerified;
                 var message = "Please confirm the verification link sent to " + user.email +
-                    " before you logout. Otherwise your account will be deleted"
+                    " before you logout. Otherwise your account will be deleted."
 
                 if (!verified) {
                     showEnable(logoutBtn)
@@ -139,7 +137,7 @@ function signOut() {
         showEnable(pass)
         showEnable(signup)
         showEnable(login)
-        verify.innerHTML = "Please enter your user information to log in"
+        verify.innerHTML = "Please enter your user information to log in."
     }).catch(function (error) {
         // An error happened.
         window.alert(error.message);
