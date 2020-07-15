@@ -3,7 +3,8 @@ body {
 }
 
 .home {
-    width: 50vw;
+    margin-top: 120px;
+    width: 450px;
     justify-content: space-evenly;
     align-self: center;
     display: flex;
@@ -15,22 +16,15 @@ body {
     padding-left: 1.35vw;
 }
 
-#signout {
-    visibility: hidden;
-}
-
 .outside {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-input {
-    width: 50%;
-}
-
 h1 {
     display: flex;
+    margin-top: 60px;
     flex-direction: row;
     color: gainsboro;
     justify-content: center;
