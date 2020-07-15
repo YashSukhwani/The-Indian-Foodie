@@ -28,21 +28,20 @@ Currently, if a user closes the tab without verifying their email, I had setup t
 the delete user request made to Firebase from this function does not complete in time. Hence, it makes more sense to send a simple url 
 request to the backend, a request that will complete on time, to indicate the user that needs to be deleted. Then, the actual delete user
 request to Firebase Auth can be made from the Firebase function that handles the simple url request from the frontend.
+
 */
 
 // Below is the function where I tried to send the delete request directly to Firebase in time by using a timer to delay the closing 
 // of the browser window.
 
-// window.addEventListener('beforeunload', () => {
-//     var x = newUsers.length * 900; // number of miliseconds to hold before unloading page
-//     var a = (new Date()).getTime() + x;
-//     // -----------
-//     cleanUsers(); // function call goes here
-//     // -----------
-//     // browser will hold with unloading your page for X miliseconds, letting
-//     // your function call to finish
-//     while ((new Date()).getTime() < a) {}
-// }, false);
+window.addEventListener('beforeunload', async () => {
+    var x = newUsers.length * 300; // number of miliseconds to hold before unloading page
+    var a = (new Date()).getTime() + x;
+
+    await cleanUsers(); // function call goes here
+
+    while ((new Date()).getTime() < a) {} // browser will hold with unloading your page for X miliseconds, letting your function call finish
+}, false);
 
 let newUsers = new Array();
 
@@ -80,7 +79,7 @@ firebase.auth().onAuthStateChanged((user) => {
 
 // After the user successfully logs in, update his remaining profile information.
 
-function createNewUser() {
+async function createNewUser() {
     var email = document.getElementById("email");
     var pass = document.getElementById("pass");
     var logoutBtn = document.getElementById('signout');
@@ -88,14 +87,14 @@ function createNewUser() {
     var signup = document.getElementById("signup");
     var verify = document.getElementById("verify");
 
-    firebase.auth().createUserWithEmailAndPassword(email.value, pass.value)
-        .then(() => {
+    await firebase.auth().createUserWithEmailAndPassword(email.value, pass.value)
+        .then(async () => {
             var user = firebase.auth().currentUser;
             newUsers.push(user)
             clearInput(email)
             clearInput(pass)
 
-            user.sendEmailVerification().then(function () { // Email sent.
+            await user.sendEmailVerification().then(function () { // Email sent.
                 var verified = user.emailVerified;
                 var message = "Please confirm the verification link sent to " + user.email +
                     " before you logout. Otherwise your account will be deleted."
@@ -119,11 +118,11 @@ function createNewUser() {
 }
 
 
-function loginUser() {
+async function loginUser() {
     let email = document.getElementById("email").value;
     let pass = document.getElementById("pass").value;
 
-    firebase.auth().signInWithEmailAndPassword(email, pass).then(() => {
+    await firebase.auth().signInWithEmailAndPassword(email, pass).then(() => {
         var user = firebase.auth().currentUser;
         var verified = user.emailVerified;
         console.log(verified)
@@ -135,17 +134,17 @@ function loginUser() {
 }
 
 
-function cleanUsers() {
+async function cleanUsers() {
     var unVerified = new Array(); // includes all unVerified accouns created during that session
     var unverEmails = new Array();
     if (newUsers.length != 0) {
-        newUsers.forEach((currUser) => {
+        newUsers.forEach(async (currUser) => {
             if (currUser != null) {
                 let verified = currUser.emailVerified;
                 if (!verified) {
                     unVerified.push(currUser)
                     unverEmails.push(currUser.email)
-                    currUser.delete().then(function () {
+                    await currUser.delete().then(function () {
                         // User deleted.
                     }).catch(function (error) {
                         // An error happened.
@@ -163,9 +162,8 @@ function cleanUsers() {
     }
 }
 
-function signOut() {
-    cleanUsers();
-    firebase.auth().signOut().then(function () {
+async function signOut() {
+    await firebase.auth().signOut().then(async function () {
         // Sign-out successful.
         var email = document.getElementById("email");
         var pass = document.getElementById("pass");
@@ -180,6 +178,7 @@ function signOut() {
         showEnable(signup)
         showEnable(login)
         verify.innerHTML = "Please enter your user information to log in."
+        await cleanUsers();
     }).catch(function (error) {
         // An error happened.
         window.alert(error.message);
