@@ -18,12 +18,24 @@ The same thing also happens when the user closes the tab (session) they were wor
 let newUsers = new Array();
 
 firebase.auth().onAuthStateChanged((user) => {
-    sessionEnd();
     if (user) {
-        let verify = document.getElementById("verify");
-        let verified = user.emailVerified;
-        if (verified)
-            verify.innerHTML = "You are now logged in!"
+        var email = document.getElementById("email");
+        var pass = document.getElementById("pass");
+        var logoutBtn = document.getElementById('signout');
+        var verify = document.getElementById("verify");
+        var login = document.getElementById("login");
+        var signup = document.getElementById("signup");
+
+        showEnable(logoutBtn)
+        clearInput(email)
+        clearInput(pass)
+        hideDisable(email)
+        hideDisable(pass)
+        hideDisable(signup)
+        hideDisable(login)
+
+        // Not possible to log into an unVerified account because it won't exist.
+        verify.innerHTML = "You are logged in!"
     }
 })
 
@@ -36,27 +48,29 @@ function createNewUser() {
     var email = document.getElementById("email");
     var pass = document.getElementById("pass");
     var logoutBtn = document.getElementById('signout');
-    var verify = document.getElementById("verify").innerHTML;
     var login = document.getElementById("login");
     var signup = document.getElementById("signup");
-
+    var verify = document.getElementById("verify");
 
     firebase.auth().createUserWithEmailAndPassword(email.value, pass.value)
         .then(() => {
             var user = firebase.auth().currentUser;
+            newUsers.push(user)
+            clearInput(email)
+            clearInput(pass)
 
             user.sendEmailVerification().then(function () { // Email sent.
                 var verified = user.emailVerified;
+                var message = "Please confirm the verification link sent to " + user.email +
+                    " before you logout. Otherwise your account will be deleted"
 
                 if (!verified) {
-                    verify = "Please confirm the verification link sent to " + user.email
-                    newUsers.push(user)
-
                     showEnable(logoutBtn)
                     hideDisable(email)
                     hideDisable(pass)
                     hideDisable(signup)
                     hideDisable(login)
+                    verify.innerHTML = message
                 } // add else and direct the user to application inside.
 
             }).catch(function (error) {
@@ -68,43 +82,67 @@ function createNewUser() {
         })
 }
 
+
 function loginUser() {
     let email = document.getElementById("email").value;
     let pass = document.getElementById("pass").value;
 
-    firebase.auth().signInWithEmailAndPassword(email, pass).catch(function (error) {
+    firebase.auth().signInWithEmailAndPassword(email, pass).then(() => {
+        var user = firebase.auth().currentUser;
+        var verified = user.emailVerified;
+        console.log(verified)
+        if (!verified)
+            newUsers.push(user)
+    }).catch(function (error) {
         window.alert(error.message);
     })
 }
 
-function sessionEnd() {
+
+function cleanUsers() {
+    var unVerified = new Array(); // includes all unVerified accouns created during that session
     if (newUsers.length != 0) {
         newUsers.forEach((currUser) => {
             let verified = currUser.emailVerified;
             if (!verified) {
+                unVerified.push(currUser.email)
                 currUser.delete().then(function () {
                     // User deleted.
                 }).catch(function (error) {
                     // An error happened.
+                    window.alert(error.message);
+                    // window.alert(error.message);
                 });
             }
         })
+        // Removes already deleted users from newUsers
+        for (let i = newUsers.length - 1; i >= 0; i--)
+            if (unVerified.includes(newUsers[i]))
+                newUsers.pop();
+        console.log('unVerified ' + unVerified)
     }
 }
 
 function signOut() {
+    cleanUsers();
     firebase.auth().signOut().then(function () {
         // Sign-out successful.
-        let verify = document.getElementById("verify");
-        verify.innerHTML = ""
+        var email = document.getElementById("email");
+        var pass = document.getElementById("pass");
+        var logoutBtn = document.getElementById('signout');
+        var verify = document.getElementById("verify");
+        var login = document.getElementById("login");
+        var signup = document.getElementById("signup");
 
         hideDisable(logoutBtn)
         showEnable(email)
         showEnable(pass)
         showEnable(signup)
         showEnable(login)
+        verify.innerHTML = "Please enter your user information to log in"
     }).catch(function (error) {
         // An error happened.
+        window.alert(error.message);
     });
 }
 
@@ -116,4 +154,8 @@ function hideDisable(item) {
 function showEnable(item) {
     item.disabled = false
     // item.style.visibility = block
+}
+
+function clearInput(item) {
+    item.value = ""
 }

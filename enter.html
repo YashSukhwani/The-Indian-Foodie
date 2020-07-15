@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="enter.css">
     </head>
 
-    <body onbeforeunload="sessionEnd()">
+    <body onbeforeunload="cleanUsers()">
 
         <h1>The Indian Foodie</h1>
         <div class="outside">
@@ -21,7 +21,7 @@
                 <input type="password" id="pass" class="form-control" placeholder="Password">
                 <button type="submit" id="login" onclick="loginUser()" class="btn btn-dark">Login</button>
                 <button type="submit" id="signup" onclick="createNewUser()" class="btn btn-dark">Sign Up</button>
-                <button type="submit" id="signout" onclick="signOut()" disabled class="btn btn-dark">Sign Out</button>
+                <button type="submit" disabled id="signout" onclick="signOut()" class="btn btn-dark">Sign Out</button>
                 <p id="verify"></p>
             </div>
         </div>
