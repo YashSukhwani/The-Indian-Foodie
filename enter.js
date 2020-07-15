@@ -35,15 +35,15 @@ request to Firebase Auth can be made from the Firebase function that handles the
 // of the browser window.
 
 window.addEventListener('beforeunload', async () => {
-    var x = newUsers.length * 300; // number of miliseconds to hold before unloading page
+    var x = 200; // number of miliseconds to hold before unloading page
     var a = (new Date()).getTime() + x;
 
-    await cleanUsers(); // function call goes here
+    await signOut(); // function call goes here
 
-    while ((new Date()).getTime() < a) {} // browser will hold with unloading your page for X miliseconds, letting your function call finish
+    while ((new Date()).getTime() < a) {} // X miliseconds delay before browser unloads, allowing function call finish
 }, false);
 
-let newUsers = new Array();
+// let newUsers = new Array();
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -90,7 +90,7 @@ async function createNewUser() {
     await firebase.auth().createUserWithEmailAndPassword(email.value, pass.value)
         .then(async () => {
             var user = firebase.auth().currentUser;
-            newUsers.push(user)
+            // newUsers.push(user)
             clearInput(email)
             clearInput(pass)
 
@@ -125,46 +125,39 @@ async function loginUser() {
     await firebase.auth().signInWithEmailAndPassword(email, pass).then(() => {
         var user = firebase.auth().currentUser;
         var verified = user.emailVerified;
-        console.log(verified)
+        console.log('verified: ' + verified)
         if (!verified)
-            newUsers.push(user)
+            user.delete()
+
     }).catch(function (error) {
         window.alert(error.message);
     })
 }
 
 
-async function cleanUsers() {
-    var unVerified = new Array(); // includes all unVerified accouns created during that session
-    var unverEmails = new Array();
-    if (newUsers.length != 0) {
-        newUsers.forEach(async (currUser) => {
-            if (currUser != null) {
-                let verified = currUser.emailVerified;
-                if (!verified) {
-                    unVerified.push(currUser)
-                    unverEmails.push(currUser.email)
-                    await currUser.delete().then(function () {
-                        // User deleted.
-                    }).catch(function (error) {
-                        // An error happened.
-                        window.alert(error.message);
-                        // window.alert(error.message);
-                    });
-                }
-            }
-        })
-        // Removes already deleted users from newUsers
-        for (let i = newUsers.length - 1; i >= 0; i--)
-            if (unVerified.includes(newUsers[i]))
-                newUsers[i] = null
-        console.log('unVerified ' + unverEmails)
-    }
-}
+// async function cleanUsers() {
+//     // only allowed to delete the current user from client side
+//     var user = firebase.auth().currentUser;
+//     if (user)
+//         if (!user.emailVerified) {
+//             await user.delete()
+//             console.log('Deleted ' + user.email)
+//         }
+// }
 
 async function signOut() {
-    await firebase.auth().signOut().then(async function () {
-        // Sign-out successful.
+
+    var user = await firebase.auth().currentUser;
+    if (user) {
+        if (!user.emailVerified) {
+            await user.delete()
+            console.log('Deleted ' + user.email)
+        } else {
+            await firebase.auth().signOut().catch(function (error) {
+                window.alert(error.message); // An error happened.
+            });
+        }
+
         var email = document.getElementById("email");
         var pass = document.getElementById("pass");
         var logoutBtn = document.getElementById('signout');
@@ -178,11 +171,7 @@ async function signOut() {
         showEnable(signup)
         showEnable(login)
         verify.innerHTML = "Please enter your user information to log in."
-        await cleanUsers();
-    }).catch(function (error) {
-        // An error happened.
-        window.alert(error.message);
-    });
+    }
 }
 
 function hideDisable(item) {
