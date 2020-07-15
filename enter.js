@@ -8,10 +8,41 @@ The application creates a new user with the provided email and password and send
 The user creation elements in the form are disabled at this stage, preventing a link from being sent to other new users.
 If the user logs out without verifying, the object created in firebase gets deleted.
 After the user logs out without verifying, the original form elements are enabled and the logOut button is disabled.
+The same thing must also happen when the user closes the tab (session) they were working in.
+
+*/
+
+/*
+Curent Implemetation
 
 Every time a user's auth state changes, all the unverified users they created during that session get deleted from firebase.
-The same thing also happens when the user closes the tab (session) they were working in.
+That would be safe but it has implementation problems. This means an unverified user's account will be deleted even before they can
+confirm their email. Hence, the version being used is that all unverified users will be deleted when a user signs out.
+
+Under the regular implementation, one user can only send one createNewUser request at a time, and hence there can only be one unverified
+user at a time. However, if the user goes into inspect element, then enables the form inputs and sends a request, they will be able to 
+create more than one unverified user. A practical solution to this would be rendering a different page for the user while we await their
+email confirmation. However, that has not yet been implemented in this test version.
+
+Currently, if a user closes the tab without verifying their email, I had setup the cleanUsers() function to run. However,
+the delete user request made to Firebase from this function does not complete in time. Hence, it makes more sense to send a simple url 
+request to the backend, a request that will complete on time, to indicate the user that needs to be deleted. Then, the actual delete user
+request to Firebase Auth can be made from the Firebase function that handles the simple url request from the frontend.
 */
+
+// Below is the function where I tried to send the delete request directly to Firebase in time by using a timer to delay the closing 
+// of the browser window.
+
+// window.addEventListener('beforeunload', () => {
+//     var x = newUsers.length * 900; // number of miliseconds to hold before unloading page
+//     var a = (new Date()).getTime() + x;
+//     // -----------
+//     cleanUsers(); // function call goes here
+//     // -----------
+//     // browser will hold with unloading your page for X miliseconds, letting
+//     // your function call to finish
+//     while ((new Date()).getTime() < a) {}
+// }, false);
 
 let newUsers = new Array();
 
@@ -32,8 +63,15 @@ firebase.auth().onAuthStateChanged((user) => {
         hideDisable(signup)
         hideDisable(login)
 
-        // Not possible to log into an unVerified account because it won't exist.
-        verify.innerHTML = "You are logged in!"
+        if (user.emailVerified)
+            verify.innerHTML = "You are logged in!"
+        else {
+            var message = "Please confirm the verification link sent to " + user.email +
+                " before you logout. Otherwise your account will be deleted."
+            var verify = document.getElementById("verify");
+            verify.innerHTML = message
+        }
+
     }
 })
 
@@ -99,25 +137,29 @@ function loginUser() {
 
 function cleanUsers() {
     var unVerified = new Array(); // includes all unVerified accouns created during that session
+    var unverEmails = new Array();
     if (newUsers.length != 0) {
         newUsers.forEach((currUser) => {
-            let verified = currUser.emailVerified;
-            if (!verified) {
-                unVerified.push(currUser.email)
-                currUser.delete().then(function () {
-                    // User deleted.
-                }).catch(function (error) {
-                    // An error happened.
-                    window.alert(error.message);
-                    // window.alert(error.message);
-                });
+            if (currUser != null) {
+                let verified = currUser.emailVerified;
+                if (!verified) {
+                    unVerified.push(currUser)
+                    unverEmails.push(currUser.email)
+                    currUser.delete().then(function () {
+                        // User deleted.
+                    }).catch(function (error) {
+                        // An error happened.
+                        window.alert(error.message);
+                        // window.alert(error.message);
+                    });
+                }
             }
         })
         // Removes already deleted users from newUsers
         for (let i = newUsers.length - 1; i >= 0; i--)
             if (unVerified.includes(newUsers[i]))
-                newUsers.pop();
-        console.log('unVerified ' + unVerified)
+                newUsers[i] = null
+        console.log('unVerified ' + unverEmails)
     }
 }
 
