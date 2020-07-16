@@ -1,0 +1,63 @@
+body {
+    background-color: darkorange;
+}
+
+.foodList {
+    margin-top: 120px;
+    justify-content: space-evenly;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    height: 350px;
+}
+
+.filler {
+    width: 20px;
+}
+
+.controlBut {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.left, .right, .center {
+    display: flex;
+    flex-direction: row;
+    width: 33.3333vw;
+    justify-content: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.formIn {
+    width: 60%;
+}
+
+.outside {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+h1 {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex-direction: row;
+    color: gainsboro;
+    justify-content: center;
+    font-size: 60px;
+}
+
+#heading {
+    font-size: 36px;
+    margin-top: 20px;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
